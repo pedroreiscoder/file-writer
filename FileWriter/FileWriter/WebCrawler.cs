@@ -1,5 +1,7 @@
 ﻿using OpenQA.Selenium.Chrome;
 using System;
+using System.Text;
+using System.Web;
 
 namespace FileWriter
 {
@@ -36,6 +38,26 @@ namespace FileWriter
             {
                 _randomNumber = _random.Next(_sentences.Length);
                 return _sentences[_randomNumber];
+            }
+        }
+
+        private static string _urlSentence;
+
+        private static string _bytesString;
+
+        public static int GetBytes(string sentence)
+        {
+            _urlSentence = HttpUtility.UrlEncode(sentence, Encoding.UTF8);
+
+            try
+            {
+                _webDriver.Navigate().GoToUrl($"https://mothereff.in/byte-counter#{_urlSentence}");
+                _bytesString = _webDriver.FindElementById("bytes").Text;
+                return int.Parse(_bytesString.Substring(0, _bytesString.IndexOf(" ")));
+            }
+            catch
+            {
+                return Encoding.UTF8.GetByteCount(sentence);
             }
         }
     }

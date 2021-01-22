@@ -6,7 +6,9 @@ namespace FileWriter
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(WebCrawler.GetSentence());
+            string sentence = WebCrawler.GetSentence();
+            Console.WriteLine(sentence);
+            Console.WriteLine(WebCrawler.GetBytes(sentence));
             Console.ReadLine();
         }
     }
