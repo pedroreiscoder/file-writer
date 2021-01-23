@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileWriter.Crawler;
+using System;
 using System.IO;
 using System.Text;
 
@@ -8,8 +9,14 @@ namespace FileWriter
     {
         public static void GenerateFile(string path, int fileSize, int bufferSize)
         {
-            string sentence = WebCrawler.GetSentence();
-            int bytes = WebCrawler.GetBytes(sentence);
+            string sentence = "";
+            int bytes = 0;
+
+            using (WebCrawler webCrawler = new WebCrawler())
+            {
+                sentence = webCrawler.GetSentence();
+                bytes = webCrawler.GetBytes(sentence);
+            }
 
             int bufferSizeBytes = bufferSize * 1048576;
             long fileSizeBytes = fileSize * 1048576;

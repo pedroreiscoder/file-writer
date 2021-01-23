@@ -3,13 +3,13 @@ using System;
 using System.Text;
 using System.Web;
 
-namespace FileWriter
+namespace FileWriter.Crawler
 {
-    public static class WebCrawler
+    public class WebCrawler : IWebCrawler
     {
-        private static readonly ChromeDriver _webDriver;
+        private readonly ChromeDriver _webDriver;
 
-        static WebCrawler()
+        public WebCrawler()
         {
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("headless");
@@ -25,9 +25,7 @@ namespace FileWriter
 
         private static Random _random = new Random();
 
-        private static int _randomNumber = 0;
-
-        public static string GetSentence()
+        public string GetSentence()
         {
             try
             {
@@ -36,28 +34,33 @@ namespace FileWriter
             }
             catch
             {
-                _randomNumber = _random.Next(_sentences.Length);
-                return _sentences[_randomNumber];
+                return _sentences[_random.Next(_sentences.Length)];
             }
         }
 
-        private static string _urlSentence;
-
-        private static string _bytesString;
-
-        public static int GetBytes(string sentence)
+        public int GetBytes(string sentence)
         {
-            _urlSentence = HttpUtility.UrlEncode(sentence, Encoding.UTF8);
+            string urlSentence = HttpUtility.UrlEncode(sentence, Encoding.UTF8);
 
             try
             {
-                _webDriver.Navigate().GoToUrl($"https://mothereff.in/byte-counter#{_urlSentence}");
-                _bytesString = _webDriver.FindElementById("bytes").Text;
-                return int.Parse(_bytesString.Substring(0, _bytesString.IndexOf(" ")));
+                _webDriver.Navigate().GoToUrl($"https://mothereff.in/byte-counter#{urlSentence}");
+                string bytesString = _webDriver.FindElementById("bytes").Text;
+                return int.Parse(bytesString.Substring(0, bytesString.IndexOf(" ")));
             }
             catch
             {
                 return Encoding.UTF8.GetByteCount(sentence);
+            }
+        }
+
+        public void Dispose() => Dispose(true);
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _webDriver.Dispose();
             }
         }
     }
