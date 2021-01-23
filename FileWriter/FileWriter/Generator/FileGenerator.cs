@@ -1,5 +1,6 @@
 ﻿using FileWriter.Crawler;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -14,8 +15,10 @@ namespace FileWriter.Generator
             _webCrawler = webCrawler;
         }
 
-        public void GenerateFile(string path, int fileSize, int bufferSize)
+        public Report GenerateFile(string path, int fileSize, int bufferSize)
         {
+            string fileName = $"{DateTime.Now.ToString("yyyy-MM-dd-HHmmss")}-arquivo-gerado.txt";
+
             string sentence = _webCrawler.GetSentence();
             int bytes = _webCrawler.GetBytes(sentence);
 
@@ -25,10 +28,12 @@ namespace FileWriter.Generator
             int iterations = bufferSizeBytes / bytes;
             int flushSizeBytes = iterations * bytes;
             long currentFileSizeBytes = 0;
+            int counter = 0;
 
-            string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd-HHmmss");
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
 
-            using (StreamWriter writer = new StreamWriter($@"{path}\{currentDateTime}-arquivo-gerado.txt", false, Encoding.UTF8, bufferSizeBytes))
+            using (StreamWriter writer = new StreamWriter($@"{path}\{fileName}", false, Encoding.UTF8, bufferSizeBytes))
             {
                 do
                 {
@@ -37,9 +42,22 @@ namespace FileWriter.Generator
 
                     writer.Flush();
                     currentFileSizeBytes += flushSizeBytes;
+                    counter++;
 
                 } while (currentFileSizeBytes < fileSizeBytes);
             }
+
+            watch.Stop();
+
+            return new Report()
+            {
+                Name = fileName,
+                Size = fileSize,
+                Path = path,
+                Iterations = counter,
+                TotalTime = watch.Elapsed,
+                AverageTime = watch.Elapsed / counter
+            };
         }
 
         public void Dispose() => Dispose(true);
