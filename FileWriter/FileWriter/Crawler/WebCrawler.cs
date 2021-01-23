@@ -11,9 +11,11 @@ namespace FileWriter.Crawler
 
         public WebCrawler()
         {
+            ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+            service.HideCommandPromptWindow = true;
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("headless");
-            _webDriver = new ChromeDriver(options);
+            _webDriver = new ChromeDriver(service, options);
         }
 
         private static string[] _sentences = new string[]
