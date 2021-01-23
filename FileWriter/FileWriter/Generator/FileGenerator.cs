@@ -3,20 +3,21 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace FileWriter
+namespace FileWriter.Generator
 {
-    public static class FileGenerator
+    public class FileGenerator : IFileGenerator
     {
-        public static void GenerateFile(string path, int fileSize, int bufferSize)
-        {
-            string sentence = "";
-            int bytes = 0;
+        private readonly IWebCrawler _webCrawler;
 
-            using (WebCrawler webCrawler = new WebCrawler())
-            {
-                sentence = webCrawler.GetSentence();
-                bytes = webCrawler.GetBytes(sentence);
-            }
+        public FileGenerator(IWebCrawler webCrawler)
+        {
+            _webCrawler = webCrawler;
+        }
+
+        public void GenerateFile(string path, int fileSize, int bufferSize)
+        {
+            string sentence = _webCrawler.GetSentence();
+            int bytes = _webCrawler.GetBytes(sentence);
 
             int bufferSizeBytes = bufferSize * 1048576;
             long fileSizeBytes = fileSize * 1048576;
@@ -38,6 +39,16 @@ namespace FileWriter
                     currentFileSizeBytes += flushSizeBytes;
 
                 } while (currentFileSizeBytes < fileSizeBytes);
+            }
+        }
+
+        public void Dispose() => Dispose(true);
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _webCrawler.Dispose();
             }
         }
     }

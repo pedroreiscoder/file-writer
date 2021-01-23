@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FileWriter.Crawler;
+using FileWriter.Generator;
+using System;
 
 namespace FileWriter
 {
@@ -33,7 +35,13 @@ namespace FileWriter
                 bufferSize = int.Parse(Console.ReadLine());
             }
 
-            FileGenerator.GenerateFile(path, fileSize, bufferSize);
+            using (WebCrawler webCrawler = new WebCrawler())
+            {
+                using (FileGenerator fileGenerator = new FileGenerator(webCrawler))
+                {
+                    fileGenerator.GenerateFile(path, fileSize, bufferSize);
+                }
+            }
 
             Console.WriteLine("Pressione qualquer tecla para sair...");
             Console.ReadLine();
