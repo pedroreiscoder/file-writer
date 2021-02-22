@@ -29,6 +29,7 @@ namespace FileWriter.Generator
 
             int iterations = bufferSizeBytes / bytes;
             int flushSizeBytes = iterations * bytes;
+
             long currentFileSizeBytes = 0;
             int counter = 0;
 
