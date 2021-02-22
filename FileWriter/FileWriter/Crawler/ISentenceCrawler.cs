@@ -2,9 +2,8 @@
 
 namespace FileWriter.Crawler
 {
-    public interface IWebCrawler : IDisposable
+    public interface ISentenceCrawler : IDisposable
     {
         string GetSentence();
-        int GetBytes(string sentence);
     }
 }

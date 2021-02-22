@@ -59,11 +59,14 @@ namespace FileWriter
 
             Report report;
 
-            using (WebCrawler webCrawler = new WebCrawler())
+            using (SentenceCrawler sentenceCrawler = new SentenceCrawler())
             {
-                using (FileGenerator fileGenerator = new FileGenerator(webCrawler))
+                using (BytesCrawler bytesCrawler = new BytesCrawler())
                 {
-                    report = fileGenerator.GenerateFile(path, fileSize, bufferSize);
+                    using (FileGenerator fileGenerator = new FileGenerator(sentenceCrawler, bytesCrawler))
+                    {
+                        report = fileGenerator.GenerateFile(path, fileSize, bufferSize);
+                    }
                 }
             }
 

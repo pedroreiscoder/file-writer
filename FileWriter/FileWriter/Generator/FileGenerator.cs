@@ -8,19 +8,21 @@ namespace FileWriter.Generator
 {
     public class FileGenerator : IFileGenerator
     {
-        private readonly IWebCrawler _webCrawler;
+        private readonly ISentenceCrawler _sentenceCrawler;
+        private readonly IBytesCrawler _bytesCrawler;
 
-        public FileGenerator(IWebCrawler webCrawler)
+        public FileGenerator(ISentenceCrawler sentenceCrawler, IBytesCrawler bytesCrawler)
         {
-            _webCrawler = webCrawler;
+            _sentenceCrawler = sentenceCrawler;
+            _bytesCrawler = bytesCrawler;
         }
 
         public Report GenerateFile(string path, int fileSize, int bufferSize)
         {
             string fileName = $"{DateTime.Now.ToString("yyyy-MM-dd-HHmmss")}-arquivo-gerado.txt";
 
-            string sentence = _webCrawler.GetSentence();
-            int bytes = _webCrawler.GetBytes(sentence);
+            string sentence = _sentenceCrawler.GetSentence();
+            int bytes = _bytesCrawler.GetBytes(sentence);
 
             int bufferSizeBytes = bufferSize * 1048576;
             long fileSizeBytes = fileSize * 1048576;
@@ -66,7 +68,8 @@ namespace FileWriter.Generator
         {
             if (disposing)
             {
-                _webCrawler.Dispose();
+                _sentenceCrawler.Dispose();
+                _bytesCrawler.Dispose();
             }
         }
     }
